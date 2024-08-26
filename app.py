@@ -18,7 +18,7 @@ genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-pro')
 
 from langchain.document_loaders import PyPDFLoader
-import os
+
 
 # Load and split the PDF
 FILEPATH = "Dummy Data .pdf"  # Path to the uploaded PDF
@@ -30,10 +30,15 @@ try:
         raise PermissionError(f"Error: Cannot read file at {FILEPATH}. Check permissions.")
     else:
         loader = PyPDFLoader(FILEPATH)
-        data = loader.load()
+        data = loader.load() pdf_loader.load()
         print("File loaded successfully!")
 except Exception as e:
     st.error(f"Failed to load PDF file: {str(e)}")
+
+# Split the PDF text into smaller chunks for better retrieval
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=100)
+all_splits = text_splitter.split_documents(data)
+
 
 # Set up a local vector store for document retrieval
 persist_directory = 'data'
@@ -44,9 +49,6 @@ vectorstore = Chroma.from_documents(
     persist_directory=persist_directory
 )
 
-# Split the PDF text into smaller chunks for better retrieval
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=100)
-all_splits = text_splitter.split_documents(data)
 
 # Create a retriever from the vector store
 retriever = vectorstore.as_retriever()
