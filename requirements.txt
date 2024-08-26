@@ -1,7 +1,13 @@
 langchain
 chromadb
 langchain-community
+pypdf
 langchain-huggingface
 sentence-transformers
 google-generativeai
 streamlit
+
+
+
+
+
