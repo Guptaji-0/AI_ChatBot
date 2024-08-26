@@ -1,4 +1,3 @@
-import os  # Import the os module to handle file paths and permissions
 from langchain.chains import RetrievalQA
 from langchain.vectorstores import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -9,6 +8,7 @@ from langchain.memory import ConversationBufferMemory
 import google.generativeai as genai
 import streamlit as st
 import streamlit.components.v1 as components
+import os
 
 # Configure Gemini API LLM
 API_KEY = ("Api_Key")  # Replace with your Gemini API key
@@ -25,7 +25,7 @@ try:
         raise PermissionError(f"Error: Cannot read file at {FILEPATH}. Check permissions.")
     else:
         loader = PyPDFLoader(FILEPATH)
-        data = loader.load()
+        data = loader.load() 
         print("File loaded successfully!")
 except Exception as e:
     st.error(f"Failed to load PDF file: {str(e)}")
@@ -34,13 +34,12 @@ except Exception as e:
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=100)
 all_splits = text_splitter.split_documents(data)
 
-# Set up a local vector store for document retrieval
-persist_directory = 'data'
+# Set up an in-memory vector store for document retrieval
 embedder = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 vectorstore = Chroma.from_documents(
     documents=all_splits,
     embedding=embedder,
-    persist_directory=persist_directory
+    persist_directory=None  # Use in-memory mode
 )
 
 # Create a retriever from the vector store
@@ -144,4 +143,3 @@ streamlitDoc.addEventListener('keydown', function(e) {
 });
 </script>
 """, height=0, width=0)
-
