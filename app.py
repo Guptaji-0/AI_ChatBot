@@ -1,5 +1,4 @@
- 
-
+import os  # Import the os module to handle file paths and permissions
 from langchain.chains import RetrievalQA
 from langchain.vectorstores import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -11,12 +10,10 @@ import google.generativeai as genai
 import streamlit as st
 import streamlit.components.v1 as components
 
-
 # Configure Gemini API LLM
 API_KEY = ("Api_Key")  # Replace with your Gemini API key
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-pro')
-
 
 # Load and split the PDF
 FILEPATH = "Dummy Data .pdf"  # Path to the uploaded PDF
@@ -28,7 +25,7 @@ try:
         raise PermissionError(f"Error: Cannot read file at {FILEPATH}. Check permissions.")
     else:
         loader = PyPDFLoader(FILEPATH)
-        data = loader.load() 
+        data = loader.load()
         print("File loaded successfully!")
 except Exception as e:
     st.error(f"Failed to load PDF file: {str(e)}")
@@ -36,7 +33,6 @@ except Exception as e:
 # Split the PDF text into smaller chunks for better retrieval
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=100)
 all_splits = text_splitter.split_documents(data)
-
 
 # Set up a local vector store for document retrieval
 persist_directory = 'data'
@@ -46,7 +42,6 @@ vectorstore = Chroma.from_documents(
     embedding=embedder,
     persist_directory=persist_directory
 )
-
 
 # Create a retriever from the vector store
 retriever = vectorstore.as_retriever()
@@ -149,5 +144,4 @@ streamlitDoc.addEventListener('keydown', function(e) {
 });
 </script>
 """, height=0, width=0)
-    
-    
+
