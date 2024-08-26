@@ -1,0 +1,48 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1d1d1d;
+    color: #f5eeee;
+}
+
+.chat-row {
+    display: flex;
+    margin: 10px;
+    width: 100%;
+}
+
+.row-reverse {
+    flex-direction: row-reverse;
+}
+
+.chat-bubble {
+    font-family: "Source Sans Pro", sans-serif, "Segoe UI", "Roboto", sans-serif;
+    border: 1px solid transparent;
+    padding: 10px 15px;
+    margin: 0 10px;
+    max-width: 70%;
+}
+
+.ai-bubble {
+    background: gray; 
+    color: #181313;
+    /* Light violet */
+    border-radius: 15px;
+}
+
+.human-bubble {
+    background: #4f4ffd; /* Light purple */
+    color: #fff;
+    border-radius: 15px;
+}
+
+.chat-icon {
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    background-color: #2b2a29;
+}
