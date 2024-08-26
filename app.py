@@ -17,8 +17,6 @@ API_KEY = ("Api_Key")  # Replace with your Gemini API key
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-pro')
 
-from langchain.document_loaders import PyPDFLoader
-
 
 # Load and split the PDF
 FILEPATH = "Dummy Data .pdf"  # Path to the uploaded PDF
@@ -30,7 +28,7 @@ try:
         raise PermissionError(f"Error: Cannot read file at {FILEPATH}. Check permissions.")
     else:
         loader = PyPDFLoader(FILEPATH)
-        data = loader.load() pdf_loader.load()
+        data = loader.load() 
         print("File loaded successfully!")
 except Exception as e:
     st.error(f"Failed to load PDF file: {str(e)}")
