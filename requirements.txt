@@ -1,7 +1,7 @@
 langchain
--q -U langchain-community
 chromadb
+langchain-community
+langchain-huggingface
 sentence-transformers
--q -U google-generativeai langchain
-pypdf
-streamlit -q
+google-generativeai
+streamlit
