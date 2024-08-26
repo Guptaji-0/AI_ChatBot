@@ -16,7 +16,7 @@ genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-pro')
 
 # Load and split the PDF
-FILEPATH = "Dummy Data .pdf"  # Path to the uploaded PDF
+FILEPATH = "Dummy_Data.pdf"  # Path to the uploaded PDF
 
 try:
     if not os.path.exists(FILEPATH):
