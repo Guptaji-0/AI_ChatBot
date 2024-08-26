@@ -21,7 +21,7 @@ from langchain.document_loaders import PyPDFLoader
 import os
 
 # Load and split the PDF
-FILEPATH = " Data.pdf"  # Path to the uploaded PDF
+FILEPATH = "Dummy Data .pdf.pdf"  # Path to the uploaded PDF
 
 try:
     if not os.path.exists(FILEPATH):
