@@ -21,7 +21,7 @@ from langchain.document_loaders import PyPDFLoader
 import os
 
 # Load and split the PDF
-FILEPATH = "Dummy Data .pdf.pdf"  # Path to the uploaded PDF
+FILEPATH = "Dummy Data .pdf"  # Path to the uploaded PDF
 
 try:
     if not os.path.exists(FILEPATH):
@@ -35,10 +35,6 @@ try:
 except Exception as e:
     st.error(f"Failed to load PDF file: {str(e)}")
 
-# Split the PDF text into smaller chunks for better retrieval
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=100)
-all_splits = text_splitter.split_documents(data)
-
 # Set up a local vector store for document retrieval
 persist_directory = 'data'
 embedder = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
@@ -47,6 +43,10 @@ vectorstore = Chroma.from_documents(
     embedding=embedder,
     persist_directory=persist_directory
 )
+
+# Split the PDF text into smaller chunks for better retrieval
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=100)
+all_splits = text_splitter.split_documents(data)
 
 # Create a retriever from the vector store
 retriever = vectorstore.as_retriever()
