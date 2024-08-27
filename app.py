@@ -15,9 +15,8 @@ import streamlit.components.v1 as components
 hide_streamlit_style = """
 <style>
 #MainMenu {visibility: hidden;}
-footer {visibility: hidden;}  /* Hides the footer */
+footer {visibility: hidden;} 
 header {visibility: hidden;}
-a[href*="github.com"] {display: none;}  /* Hides the GitHub link/button */
 </style>
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
