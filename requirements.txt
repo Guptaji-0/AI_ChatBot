@@ -1,5 +1,6 @@
 langchain
 chromadb
+nltk
 faiss-cpu
 langchain-community
 pypdf
