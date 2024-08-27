@@ -1,11 +1,13 @@
 langchain
 chromadb
+faiss-cpu
 langchain-community
 pypdf
 langchain-huggingface
 sentence-transformers
 google-generativeai
 streamlit
+
 
 
 
