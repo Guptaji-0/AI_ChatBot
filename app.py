@@ -5,7 +5,6 @@ from langchain.document_loaders import PyPDFLoader
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
-from langchain.text_preprocessing import TextPreprocessing
 import google.generativeai as genai
 from langchain.vectorstores import FAISS
 import os
