@@ -122,7 +122,7 @@ with st.form("chat-form"):
     with cols[0]:
         user_input = st.text_input(
             "Chat",
-            value="",  # Remove placeholder text
+            value="Hello!",  # Remove placeholder text
             label_visibility="collapsed",
             key="human_prompt",
             autocomplete="off",  # Disable autocomplete suggestions
