@@ -46,3 +46,8 @@ body {
     height: 40px;
     background-color: #2b2a29;
 }
+/* Hide the GitHub button */
+.stApp .css-1oe4w0v { 
+    display: none; 
+}
+
