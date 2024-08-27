@@ -129,7 +129,7 @@ load_css()
 initialize_session_state()
 
 # Create the title for the app
-st.title("AI Chatbot 🤖")
+st.title("AI Assistant 🤖")
 
 # Container for the chat messages
 chat_placeholder = st.container()
