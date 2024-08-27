@@ -14,7 +14,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 # Download the required NLTK data
-nltk.download('punkt')
+nltk.download('punkt_tab')
 nltk.download('stopwords')
 
 # Hide the main menu and footer in Streamlit
