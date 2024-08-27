@@ -16,6 +16,7 @@ hide_streamlit_style = """
 <style>
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}  /* Hides the footer */
+header {visibility: hidden;}
 a[href*="github.com"] {display: none;}  /* Hides the GitHub link/button */
 </style>
 """
