@@ -1,6 +1,6 @@
-import os
-import streamlit as st
-import streamlit.components.v1 as components
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 from langchain.chains import RetrievalQA
 from langchain.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -9,15 +9,15 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
 import google.generativeai as genai
-import nltk
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
+import os
+import streamlit as st
+import streamlit.components.v1 as components
 
-# Download necessary NLTK data
+# Download the required NLTK data
 nltk.download('punkt')
 nltk.download('stopwords')
 
-# Hide the main menu and footer
+# Hide the main menu and footer in Streamlit
 hide_streamlit_style = """
 <style>
 #MainMenu {visibility: hidden;}
@@ -28,15 +28,15 @@ header {visibility: hidden;}
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # Configure Gemini API LLM
-API_KEY = os.getenv("GEMINI_API_KEY") 
+API_KEY = os.getenv("GEMINI_API_KEY")
 if not API_KEY:
-    raise ValueError("API key not found. Please set the GEMINI_API_KEY environment variable.")  # Replace with your Gemini API key
+    raise ValueError("API key not found. Please set the GEMINI_API_KEY environment variable.")
 
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-pro')
 
 # Load and split the PDF
-FILEPATH = "Dummy_Data.pdf"  # Path to the uploaded PDF
+FILEPATH = "path/to/your/pdf"  # Update this path as needed
 
 try:
     if not os.path.exists(FILEPATH):
@@ -46,18 +46,19 @@ try:
     else:
         loader = PyPDFLoader(FILEPATH)
         data = loader.load()
-        st.success("File loaded successfully!")
+        print("File loaded successfully!")
 except Exception as e:
     st.error(f"Failed to load PDF file: {str(e)}")
 
 # Preprocess text function
 def preprocess_text(text):
+    stop_words = set(stopwords.words('english'))
     tokens = word_tokenize(text.lower())
-    filtered_tokens = [word for word in tokens if word not in stopwords.words('english')]
+    filtered_tokens = [word for word in tokens if word.isalnum() and word not in stop_words]
     return ' '.join(filtered_tokens)
 
-# Split the PDF text into smaller chunks for better retrieval
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=100)
+# Split the PDF text into smaller chunks
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
 all_splits = text_splitter.split_documents(data)
 
 # Preprocess the split text
@@ -71,7 +72,7 @@ vectorstore = FAISS.from_documents(documents=all_splits, embedding=embedder)
 # Create a retriever from the vector store
 retriever = vectorstore.as_retriever()
 
-# Define a simple prompt template for consistency
+# Define a prompt template with context and query
 template = """You are a knowledgeable assistant. Please answer the following question based on the provided context.
 
 Context: {context}
@@ -84,20 +85,31 @@ memory = ConversationBufferMemory(memory_key="history", return_messages=True, in
 
 # Function to query the PDF and get a response from the LLM
 def query_pdf_with_llm(query):
-    context = retriever.get_relevant_documents(query)
-    if context:
-        context_text = context[0].page_content
-        formatted_prompt = prompt.format(context=context_text, question=query)
-        response = model.generate_content(formatted_prompt)
-        return response.text.strip()
-    else:
+    # Retrieve relevant documents
+    docs = retriever.get_relevant_documents(query)
+    
+    # If no relevant documents are found
+    if not docs:
         return "Sorry, I couldn't find any relevant information in the PDF."
+
+    # Combine the content of the retrieved documents for context
+    context_text = " ".join([doc.page_content for doc in docs])
+    
+    # Format the prompt with the combined context and user query
+    formatted_prompt = prompt.format(context=context_text, question=query)
+    
+    # Generate response from the LLM
+    response = model.generate_content(formatted_prompt)
+    return response.text.strip()
 
 # Load the custom CSS
 def load_css():
-    with open("styles.css", "r") as f:
-        css = f"<style>{f.read()}</style>"
-        st.markdown(css, unsafe_allow_html=True)
+    try:
+        with open("styles.css", "r") as f:
+            css = f"<style>{f.read()}</style>"
+            st.markdown(css, unsafe_allow_html=True)
+    except FileNotFoundError:
+        st.warning("CSS file not found. Make sure 'styles.css' is in the same directory as app.py.")
 
 # Initialize the session state for chat history
 def initialize_session_state():
