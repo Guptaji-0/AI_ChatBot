@@ -11,8 +11,13 @@ import os
 import streamlit as st
 import streamlit.components.v1 as components
 
+
+
 # Configure Gemini API LLM
-API_KEY = ("Api_Key")   # Replace with your Gemini API key
+API_KEY = os.getenv("GEMINI_API_KEY") 
+if not API_KEY:
+    raise ValueError("API key not found. Please set the GEMINI_API_KEY environment variable.")# Replace with your Gemini API key
+
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-pro')
 
