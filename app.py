@@ -11,16 +11,22 @@ import os
 import streamlit as st
 import streamlit.components.v1 as components
 
-
+# Hide the main menu and footer
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # Configure Gemini API LLM
 API_KEY = os.getenv("GEMINI_API_KEY") 
 if not API_KEY:
-    raise ValueError("API key not found. Please set the GEMINI_API_KEY environment variable.")# Replace with your Gemini API key
+    raise ValueError("API key not found. Please set the GEMINI_API_KEY environment variable.")  # Replace with your Gemini API key
 
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-pro')
-
 
 # Load and split the PDF
 FILEPATH = "Dummy_Data.pdf"  # Path to the uploaded PDF
@@ -87,6 +93,7 @@ def on_click_callback():
     st.session_state.history.append({"origin": "human", "message": human_prompt})
     ai_response = query_pdf_with_llm(human_prompt)
     st.session_state.history.append({"origin": "AI", "message": ai_response})
+    st.session_state.human_prompt = ""  # Clear input box after submission
 
 # Load CSS and initialize session state
 load_css()
@@ -115,9 +122,10 @@ with st.form("chat-form"):
     with cols[0]:
         user_input = st.text_input(
             "Chat",
-            value="Hello bot",
+            value="",  # Remove placeholder text
             label_visibility="collapsed",
             key="human_prompt",
+            autocomplete="off",  # Disable autocomplete suggestions
         )
     with cols[1]:
         submit_button = st.form_submit_button(
