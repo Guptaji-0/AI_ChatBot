@@ -6,14 +6,16 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
 import google.generativeai as genai
+from langchain.vectorstores import FAISS
+import os
 import streamlit as st
 import streamlit.components.v1 as components
-import os
 
 # Configure Gemini API LLM
-API_KEY = ("Api_Key")  # Replace with your Gemini API key
+API_KEY = ("Api_Key")   # Replace with your Gemini API key
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-pro')
+
 
 # Load and split the PDF
 FILEPATH = "Dummy_Data.pdf"  # Path to the uploaded PDF
@@ -25,7 +27,7 @@ try:
         raise PermissionError(f"Error: Cannot read file at {FILEPATH}. Check permissions.")
     else:
         loader = PyPDFLoader(FILEPATH)
-        data = loader.load() 
+        data = loader.load()
         print("File loaded successfully!")
 except Exception as e:
     st.error(f"Failed to load PDF file: {str(e)}")
@@ -34,13 +36,9 @@ except Exception as e:
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=100)
 all_splits = text_splitter.split_documents(data)
 
-# Set up an in-memory vector store for document retrieval
+# Set up FAISS for document retrieval
 embedder = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-vectorstore = Chroma.from_documents(
-    documents=all_splits,
-    embedding=embedder,
-    persist_directory=None  # Use in-memory mode
-)
+vectorstore = FAISS.from_documents(documents=all_splits, embedding=embedder)
 
 # Create a retriever from the vector store
 retriever = vectorstore.as_retriever()
