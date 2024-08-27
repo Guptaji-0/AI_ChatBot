@@ -5,11 +5,18 @@ from langchain.document_loaders import PyPDFLoader
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
+from langchain.text_preprocessing import TextPreprocessing
 import google.generativeai as genai
 from langchain.vectorstores import FAISS
 import os
 import streamlit as st
 import streamlit.components.v1 as components
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
+nltk.download('punkt')
+nltk.download('stopwords')
 
 # Hide the main menu and footer
 hide_streamlit_style = """
@@ -24,7 +31,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 # Configure Gemini API LLM
 API_KEY = os.getenv("GEMINI_API_KEY") 
 if not API_KEY:
-    raise ValueError("API key not found. Please set the GEMINI_API_KEY environment variable.")  # Replace with your Gemini API key
+    raise ValueError("API key not found. Please set the GEMINI_API_KEY environment variable.")
 
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-pro')
@@ -43,6 +50,19 @@ try:
         print("File loaded successfully!")
 except Exception as e:
     st.error(f"Failed to load PDF file: {str(e)}")
+
+# NLP for text preprocessing
+def preprocess_text(text):
+    # Tokenization
+    tokens = word_tokenize(text.lower())
+    # Remove stopwords
+    filtered_tokens = [word for word in tokens if word not in stopwords.words('english')]
+    # Join tokens back into string
+    return ' '.join(filtered_tokens)
+
+# Preprocess all documents
+for doc in data:
+    doc.page_content = preprocess_text(doc.page_content)
 
 # Split the PDF text into smaller chunks for better retrieval
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=100)
