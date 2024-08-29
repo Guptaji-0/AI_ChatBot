@@ -36,7 +36,7 @@ genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-pro')
 
 # Load and split the PDF
-FILEPATH = "Dummy-data.pdf"  # Update this path as needed
+FILEPATH = "Dummy Data .pdf"  # Update this path as needed
 
 try:
     if not os.path.exists(FILEPATH):
